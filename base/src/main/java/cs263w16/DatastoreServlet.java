@@ -42,7 +42,17 @@ public class DatastoreServlet extends HttpServlet {
           resp.setContentType("text/html");
           resp.getWriter().println("<html><body>");
           for(Entity e : results){
-              resp.getWriter().println("<h2>" + e.getProperty("value") + "</h2>"); //remove this line
+              resp.getWriter().println("<h2>" + e.getProperty("value") + " " + e.getProperty("date") +"</h2>"); //remove this line
+          }
+         resp.getWriter().println("</body></html>");
+      }
+      else if(!req.getParameterNames().hasMoreElements()){
+          Query allQuery = new Query("TaskData");
+          List<Entity> results = datastore.prepare(allQuery).asList(FetchOptions.Builder.withDefaults());
+          resp.setContentType("text/html");
+          resp.getWriter().println("<html><body>");
+          for(Entity e : results){
+              resp.getWriter().println("<h2>" +  e.getKey() + " "  + e.getProperty("value") +  " " + e.getProperty("date") +  "</h2>"); //remove this line
           }
          resp.getWriter().println("</body></html>");
       }
