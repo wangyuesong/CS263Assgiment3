@@ -14,7 +14,6 @@ import com.google.appengine.api.memcache.*;
 
 @SuppressWarnings("serial")
 public class DatastoreServlet extends HttpServlet {
-
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
 
@@ -27,9 +26,12 @@ public class DatastoreServlet extends HttpServlet {
             entity.setProperty("value", value);
             entity.setProperty("date", new Date().toString());
             datastore.put(entity);
+            
+            syncCache.put(entity.getKey().getName(), entity);
+            
             resp.setContentType("text/html");
             resp.getWriter().println("<html><body>");
-            resp.getWriter().println("<h2>Stored" + keyName + " and " + value + " in datastore</h2>"); // remove this
+            resp.getWriter().println("<h2>Stored" + keyName + " and " + value + " in datastore and memcache</h2>"); // remove this
             resp.getWriter().println("</body></html>");
         }
         //Get one key, memcache version
@@ -95,7 +97,6 @@ public class DatastoreServlet extends HttpServlet {
             resp.setContentType("text/html");
             resp.getWriter().println("<html><body>");
             resp.getWriter().println("<h2>Wrong usage<h2>");
-
             resp.getWriter().println("</body></html>");
         }
     }
