@@ -1,8 +1,5 @@
 package cs263w16;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +22,8 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.memcache.MemcacheService;
+import com.google.appengine.api.memcache.MemcacheServiceFactory;
 
 //Map this class to /ds route
 @Path("/ds")
@@ -37,7 +36,8 @@ public class DatastoreResource {
   Request request;
 
   DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-  DateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+  MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
+
   
   // Return the list of entities to the user in the browser
   @GET
@@ -69,12 +69,14 @@ public class DatastoreResource {
   public void newTaskData(@FormParam("keyname") String keyname,
       @FormParam("value") String value,
       @Context HttpServletResponse servletResponse) throws IOException {
-    String date = format.format(new Date());
+    Date date = new Date();
     Entity taskData = new Entity("TaskData",keyname);
     taskData.setProperty("value", value);
-    taskData.setProperty("date", date);
+    taskData.setProperty("date",date);
+    
     datastore.put(taskData);
-
+    syncCache.put(taskData.getKey().getName(), taskData);
+    
     System.out.println("Posting new TaskData: " +keyname+" val: "+value+" ts: "+ date );
     servletResponse.sendRedirect("../done.html");
   }
