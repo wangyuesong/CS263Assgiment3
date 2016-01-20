@@ -4,6 +4,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.*;
 
@@ -16,7 +18,7 @@ import com.google.appengine.api.memcache.*;
 public class DatastoreServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     MemcacheService syncCache = MemcacheServiceFactory.getMemcacheService();
-
+    
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String keyName = req.getParameter("keyname");
@@ -24,7 +26,7 @@ public class DatastoreServlet extends HttpServlet {
         if (keyName != null && value != null) {
             Entity entity = new Entity("TaskData", keyName);
             entity.setProperty("value", value);
-            entity.setProperty("date", new Date().toString());
+            entity.setProperty("date", new Date());
             datastore.put(entity);
             
             syncCache.put(entity.getKey().getName(), entity);

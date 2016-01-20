@@ -2,6 +2,8 @@
 package cs263w16;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -36,7 +38,7 @@ public class Worker extends HttpServlet {
         Entity taskData = new Entity("TaskData",key);
         
         taskData.setProperty("value", value);
-        taskData.setProperty("date", new Date().toString());
+        taskData.setProperty("date", new Date());
         datastore.put(taskData);
         
         syncCache.put(taskData.getKey().getName(), taskData);
