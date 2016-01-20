@@ -78,7 +78,6 @@ public class DatastoreResource {
     syncCache.put(taskData.getKey().getName(), taskData);
     
     System.out.println("Posting new TaskData: " +keyname+" val: "+value+" ts: "+ date );
-    servletResponse.sendRedirect("../done.html");
   }
 
   //The @PathParam annotation says that keyname can be inserted as parameter after this class's route /ds
